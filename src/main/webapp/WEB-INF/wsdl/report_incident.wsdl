@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-	xmlns:tns="http://reportincident.example.camel.apache.org" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:tns="http://reportincident.example.camel.tutorial.saoah" xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
-	targetNamespace="http://reportincident.example.camel.apache.org">
+	targetNamespace="http://reportincident.example.camel.tutorial.saoah">
 
 	<!-- Type definitions for input- and output parameters for webservice -->
 	<wsdl:types>
-		<xs:schema targetNamespace="http://reportincident.example.camel.apache.org">
+		<xs:schema targetNamespace="http://reportincident.example.camel.tutorial.saoah">
 			<xs:element name="inputReportIncident">
 				<xs:complexType>
 					<xs:sequence>
@@ -53,7 +53,7 @@
 		<soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
 		<wsdl:operation name="ReportIncident">
 			<soap:operation
-				soapAction="http://reportincident.example.camel.apache.org/ReportIncident"
+				soapAction="http://reportincident.example.camel.tutorial.saoah/ReportIncident"
 				style="document" />
 			<wsdl:input>
 				<soap:body parts="parameters" use="literal" />
@@ -67,7 +67,7 @@
 	<!-- Service definition -->
 	<wsdl:service name="ReportIncidentService">
 		<wsdl:port name="ReportIncidentPort" binding="tns:ReportIncidentBinding">
-			<soap:address location="http://reportincident.example.camel.apache.org" />
+			<soap:address location="http://reportincident.example.camel.tutorial.saoah" />
 		</wsdl:port>
 	</wsdl:service>
 
