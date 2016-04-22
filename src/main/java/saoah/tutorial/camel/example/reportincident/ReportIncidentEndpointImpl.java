@@ -35,18 +35,26 @@ public class ReportIncidentEndpointImpl implements ReportIncidentEndpoint {
 	public OutputReportIncident reportIncident(InputReportIncident parameters) {
 		String name = parameters.getGivenName() + " " + parameters.getFamilyName();
 
+		/**
+		 * Camel Log
+		 */
 		// let Camel do something with the name
 		sendToCamelLog(name);
 		sendToCamelLogByCamelTemplate(name);
 
+		/**
+		 * Camel File
+		 */
 		sendToCamelFile(parameters.getIncidentId(), name);
 		sendToCamelFileByCamelTemplate(parameters.getIncidentId(), name);
 
-//		createMailBody(parameters);
+		/**
+		 * Camel Message Translation
+		 */
 		sendMailBodyToCamelLog(parameters);
 		generateEmailBodyAndStoreAsFile(parameters);
 		
-		
+
 		OutputReportIncident out = new OutputReportIncident();
 		out.setCode("OK");
 		return out;
@@ -145,20 +153,20 @@ public class ReportIncidentEndpointImpl implements ReportIncidentEndpoint {
 		// of the mail body with more appends to the string builder
 		return sb.toString();
 	}
-	
-	private void sendMailBodyToCamelLog(InputReportIncident parameters){
+
+	private void sendMailBodyToCamelLog(InputReportIncident parameters) {
 		String mailBody = createMailBody(parameters);
-		template.sendBody("log:saoah.tutorial.camel",parameters);
+		template.sendBody("log:saoah.tutorial.camel", parameters);
 	}
 
 	private void generateEmailBodyAndStoreAsFile(InputReportIncident parameters) {
 		// generate the mail body using velocity template
 		// notice that we just pass in our POJO (= InputReportIncident) that we
 		// got from Apache CXF to Velocity.
-		Object response = template.sendBody("velocity:MailBody.vm", parameters);
+		Object mailBody = template.sendBody("velocity:MailBody.vm", parameters);
 		// Note: the response is a String and can be cast to String if needed
 		// store the mail in a file
 		String filename = "mail-incident-" + parameters.getIncidentId() + ".txt";
-		template.sendBodyAndHeader("file://target/subfolder", response, FileComponent.HEADER_FILE_NAME, filename);
+		template.sendBodyAndHeader("file://target/subfolder", mailBody, FileComponent.HEADER_FILE_NAME, filename);
 	}
 }
