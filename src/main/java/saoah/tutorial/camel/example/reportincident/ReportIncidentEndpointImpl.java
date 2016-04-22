@@ -24,10 +24,12 @@ public class ReportIncidentEndpointImpl implements ReportIncidentEndpoint {
 	public ReportIncidentEndpointImpl() throws Exception {
 		// create the camel context that is the "heart" of Camel
 		camel = new DefaultCamelContext();
-		template = camel.createProducerTemplate();
-
 		// add the log component
 		camel.addComponent("log", new LogComponent());
+		// add the file component
+		camel.addComponent("file", new FileComponent());
+
+		template = camel.createProducerTemplate();
 
 		// start Camel
 		camel.start();
