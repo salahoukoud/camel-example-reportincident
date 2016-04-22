@@ -93,6 +93,14 @@
 			<version>4.4</version>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- unit testing mail using mock -->
+		<dependency>
+			<groupId>org.jvnet.mock-javamail</groupId>
+			<artifactId>mock-javamail</artifactId>
+			<version>1.7</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>

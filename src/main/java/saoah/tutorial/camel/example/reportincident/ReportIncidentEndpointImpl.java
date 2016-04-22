@@ -20,18 +20,32 @@ public class ReportIncidentEndpointImpl implements ReportIncidentEndpoint {
 	private ProducerTemplate template;
 
 	public ReportIncidentEndpointImpl() throws Exception {
+		init(true);
+	}
+
+	public ReportIncidentEndpointImpl(boolean enableConsumer) throws Exception {
+		init(enableConsumer);
+	}
+
+	private void init(boolean enableConsumer) throws Exception {
 		// create the camel context that is the "heart" of Camel
 		camel = new DefaultCamelContext();
-
 		// get the ProducerTemplate thst is a Spring'ish xxxTemplate based producer for very
 		// easy sending exchanges to Camel.
 		template = camel.createProducerTemplate();
 
 		// add the event driven consumer that will listen for mail files and process them
-		addMailSendConsumer();
+		if (enableConsumer) {
+			addMailSendConsumer();
+		}
 
 		// start Camel
 		camel.start();
+
+	}
+
+	protected ProducerTemplate getTemplate() {
+		return this.template;
 	}
 
 	public OutputReportIncident reportIncident(InputReportIncident parameters) {
@@ -172,11 +186,19 @@ public class ReportIncidentEndpointImpl implements ReportIncidentEndpoint {
 				String mailBody = exchange.getIn().getBody(String.class);
 
 				// okay now we are read to send it as an email
-				System.out.println("Sending email..." + mailBody);
+				System.out.println("Sending email...");
+				sendEmail(mailBody);
+				System.out.println("Email sent");
 			}
 		});
 
 		// star the consumer, it will listen for files
 		consumer.start();
+	}
+
+	private void sendEmail(String body) {
+		// send the email to your mail server
+		String url = "smtp://someone@localhost?password=secret&to=incident@mycompany.com";
+		template.sendBodyAndHeader(url, body, "subject", "New incident reported");
 	}
 }
