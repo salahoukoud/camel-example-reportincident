@@ -29,6 +29,8 @@ public class ReportIncidentEndpointImpl implements ReportIncidentEndpoint {
 		// add the file component
 		camel.addComponent("file", new FileComponent());
 
+		// get the ProducerTemplate thst is a Spring'ish xxxTemplate based producer for very
+		// easy sending exchanges to Camel.
 		template = camel.createProducerTemplate();
 
 		// start Camel
