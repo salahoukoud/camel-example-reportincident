@@ -42,7 +42,8 @@ public class ReportIncidentEndpointImpl implements ReportIncidentEndpoint {
 		sendToCamelFile(parameters.getIncidentId(), name);
 		sendToCamelFileByCamelTemplate(parameters.getIncidentId(), name);
 
-		createMailBody(parameters);
+//		createMailBody(parameters);
+		sendMailBodyToCamelLog(parameters);
 		generateEmailBodyAndStoreAsFile(parameters);
 		
 		
@@ -143,6 +144,11 @@ public class ReportIncidentEndpointImpl implements ReportIncidentEndpoint {
 		sb.append(" ").append(parameters.getFamilyName());
 		// of the mail body with more appends to the string builder
 		return sb.toString();
+	}
+	
+	private void sendMailBodyToCamelLog(InputReportIncident parameters){
+		String mailBody = createMailBody(parameters);
+		template.sendBody("log:saoah.tutorial.camel",parameters);
 	}
 
 	private void generateEmailBodyAndStoreAsFile(InputReportIncident parameters) {
