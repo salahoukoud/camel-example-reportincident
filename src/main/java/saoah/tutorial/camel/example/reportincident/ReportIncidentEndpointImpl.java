@@ -7,6 +7,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.log.LogComponent;
@@ -18,10 +19,12 @@ import org.apache.camel.impl.DefaultCamelContext;
 public class ReportIncidentEndpointImpl implements ReportIncidentEndpoint {
 
 	private CamelContext camel;
+	private ProducerTemplate template;
 
 	public ReportIncidentEndpointImpl() throws Exception {
 		// create the camel context that is the "heart" of Camel
 		camel = new DefaultCamelContext();
+		template = camel.createProducerTemplate();
 
 		// add the log component
 		camel.addComponent("log", new LogComponent());
@@ -35,7 +38,10 @@ public class ReportIncidentEndpointImpl implements ReportIncidentEndpoint {
 
 		// let Camel do something with the name
 		sendToCamelLog(name);
+		sendToCamelLogByCamelTemplate(name);
+
 		sendToCamelFile(parameters.getIncidentId(), name);
+		sendToCamelFileByCamelTemplate(parameters.getIncidentId(), name);
 
 		OutputReportIncident out = new OutputReportIncident();
 		out.setCode("OK");
@@ -88,11 +94,10 @@ public class ReportIncidentEndpointImpl implements ReportIncidentEndpoint {
 			Endpoint endpoint = component.createEndpoint("file://target");
 
 			// OR USE fully java based configuration of endpoints by setter
-//			FileEndpoint endpoint2 = (FileEndpoint)component.createEndpoint("");
-//			endpoint2.setFile(new File("target/subfolder"));
-//			endpoint2.setAutoCreate(true);
-			
-			
+			// FileEndpoint endpoint2 = (FileEndpoint)component.createEndpoint("");
+			// endpoint2.setFile(new File("target/subfolder"));
+			// endpoint2.setAutoCreate(true);
+
 			// create an Exchange that we want to send to the endpoint
 			Exchange exchange = endpoint.createExchange();
 			// set the in message payload (=body) with the name parameter
@@ -116,5 +121,14 @@ public class ReportIncidentEndpointImpl implements ReportIncidentEndpoint {
 			// we ignore any exceptions and just rethrow as runtime
 			throw new RuntimeException(e);
 		}
+	}
+
+	private void sendToCamelLogByCamelTemplate(String name) {
+		template.sendBody("log:saoah.tutorial.camel", name);
+	}
+
+	private void sendToCamelFileByCamelTemplate(String incidentId, String name) {
+		String filename = "easy-incident-" + incidentId + ".txt";
+		template.sendBodyAndHeader("file://target/subfolder", name, FileComponent.HEADER_FILE_NAME, filename);
 	}
 }
