@@ -55,6 +55,19 @@
 			<artifactId>spring-web</artifactId>
 			<version>${spring-version}</version>
 		</dependency>
+
+		<!-- cxf web container for unit testing -->
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-transports-http-jetty</artifactId>
+			<version>${cxf-version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.4</version>
+		</dependency>
 	</dependencies>
 
 	<build>
