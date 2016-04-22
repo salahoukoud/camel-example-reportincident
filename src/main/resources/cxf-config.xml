@@ -11,7 +11,7 @@
     <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
  
     <!-- implementation of the webservice -->
-    <bean id="reportIncidentEndpoint" class="org.apache.camel.example.reportincident.ReportIncidentEndpointImpl"/>
+    <bean id="reportIncidentEndpoint" class="saoah.tutorial.camel.example.reportincident.ReportIncidentEndpointImpl"/>
  
     <!-- export the webservice using jaxws -->
     <jaxws:endpoint id="reportIncident"
