@@ -1,11 +1,14 @@
 package saoah.tutorial.camel.example.reportincident;
 
+import java.io.File;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.component.file.FileComponent;
+import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.log.LogComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 
@@ -84,6 +87,12 @@ public class ReportIncidentEndpointImpl implements ReportIncidentEndpoint {
 			// then its actumatically cleaned by mvn clean
 			Endpoint endpoint = component.createEndpoint("file://target");
 
+			// OR USE fully java based configuration of endpoints by setter
+//			FileEndpoint endpoint2 = (FileEndpoint)component.createEndpoint("");
+//			endpoint2.setFile(new File("target/subfolder"));
+//			endpoint2.setAutoCreate(true);
+			
+			
 			// create an Exchange that we want to send to the endpoint
 			Exchange exchange = endpoint.createExchange();
 			// set the in message payload (=body) with the name parameter
