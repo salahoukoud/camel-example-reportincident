@@ -24,6 +24,7 @@ public class ReportIncidentEndpointImpl implements ReportIncidentEndpoint {
 	public ReportIncidentEndpointImpl() throws Exception {
 		// create the camel context that is the "heart" of Camel
 		camel = new DefaultCamelContext();
+
 		// get the ProducerTemplate thst is a Spring'ish xxxTemplate based producer for very
 		// easy sending exchanges to Camel.
 		template = camel.createProducerTemplate();
@@ -33,27 +34,12 @@ public class ReportIncidentEndpointImpl implements ReportIncidentEndpoint {
 	}
 
 	public OutputReportIncident reportIncident(InputReportIncident parameters) {
-		String name = parameters.getGivenName() + " " + parameters.getFamilyName();
-
-		/**
-		 * Camel Log
-		 */
-		// let Camel do something with the name
-		sendToCamelLog(name);
-		sendToCamelLogByCamelTemplate(name);
-
-		/**
-		 * Camel File
-		 */
-		sendToCamelFile(parameters.getIncidentId(), name);
-		sendToCamelFileByCamelTemplate(parameters.getIncidentId(), name);
 
 		/**
 		 * Camel Message Translation
 		 */
 		sendMailBodyToCamelLog(parameters);
 		generateEmailBodyAndStoreAsFile(parameters);
-		
 
 		OutputReportIncident out = new OutputReportIncident();
 		out.setCode("OK");
