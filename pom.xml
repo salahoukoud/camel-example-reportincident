@@ -22,6 +22,14 @@
 		<maven.compiler.target>1.7</maven.compiler.target>
 
 		<cxf-version>2.6.1</cxf-version>
+		<jetty-version>8.1.16.v20140903</jetty-version>
+		<spring-version>${spring31-version}</spring-version>
+		<!-- spring 3.0 support is @deprecated -->
+		<spring30-version>3.0.7.RELEASE</spring30-version>
+		<spring31-version>3.1.4.RELEASE</spring31-version>
+		<spring32-version>3.2.2.RELEASE</spring32-version>
+
+		<maven-compiler-plugin-version>2.5.1</maven-compiler-plugin-version>
 	</properties>
 
 	<dependencies>
@@ -40,6 +48,13 @@
 			<artifactId>cxf-rt-transports-http</artifactId>
 			<version>${cxf-version}</version>
 		</dependency>
+
+		<!-- we make use of spring ContextLoaderListener to launch Camel -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring-version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -49,8 +64,9 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin-version}</version>
 			</plugin>
-			
+
 			<!-- CXF wsdl2java generator, will plugin to the compile goal -->
 			<plugin>
 				<groupId>org.apache.cxf</groupId>
@@ -74,6 +90,15 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<!-- so we can run mvn jetty:run -->
+			<plugin>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>${jetty-version}</version>
+			</plugin>
 		</plugins>
+
+
 	</build>
 </project>
