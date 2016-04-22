@@ -42,6 +42,10 @@ public class ReportIncidentEndpointImpl implements ReportIncidentEndpoint {
 		sendToCamelFile(parameters.getIncidentId(), name);
 		sendToCamelFileByCamelTemplate(parameters.getIncidentId(), name);
 
+		createMailBody(parameters);
+		generateEmailBodyAndStoreAsFile(parameters);
+		
+		
 		OutputReportIncident out = new OutputReportIncident();
 		out.setCode("OK");
 		return out;
@@ -129,5 +133,26 @@ public class ReportIncidentEndpointImpl implements ReportIncidentEndpoint {
 	private void sendToCamelFileByCamelTemplate(String incidentId, String name) {
 		String filename = "easy-incident-" + incidentId + ".txt";
 		template.sendBodyAndHeader("file://target/subfolder", name, FileComponent.HEADER_FILE_NAME, filename);
+	}
+
+	private String createMailBody(InputReportIncident parameters) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Incident ").append(parameters.getIncidentId());
+		sb.append(" has been reported on the ").append(parameters.getIncidentDate());
+		sb.append(" by ").append(parameters.getGivenName());
+		sb.append(" ").append(parameters.getFamilyName());
+		// of the mail body with more appends to the string builder
+		return sb.toString();
+	}
+
+	private void generateEmailBodyAndStoreAsFile(InputReportIncident parameters) {
+		// generate the mail body using velocity template
+		// notice that we just pass in our POJO (= InputReportIncident) that we
+		// got from Apache CXF to Velocity.
+		Object response = template.sendBody("velocity:MailBody.vm", parameters);
+		// Note: the response is a String and can be cast to String if needed
+		// store the mail in a file
+		String filename = "mail-incident-" + parameters.getIncidentId() + ".txt";
+		template.sendBodyAndHeader("file://target/subfolder", response, FileComponent.HEADER_FILE_NAME, filename);
 	}
 }
