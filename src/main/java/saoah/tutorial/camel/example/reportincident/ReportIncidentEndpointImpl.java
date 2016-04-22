@@ -1,16 +1,14 @@
 package saoah.tutorial.camel.example.reportincident;
 
-import java.io.File;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.file.FileComponent;
-import org.apache.camel.component.file.FileEndpoint;
-import org.apache.camel.component.log.LogComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
@@ -28,6 +26,9 @@ public class ReportIncidentEndpointImpl implements ReportIncidentEndpoint {
 		// get the ProducerTemplate thst is a Spring'ish xxxTemplate based producer for very
 		// easy sending exchanges to Camel.
 		template = camel.createProducerTemplate();
+
+		// add the event driven consumer that will listen for mail files and process them
+		addMailSendConsumer();
 
 		// start Camel
 		camel.start();
@@ -154,5 +155,28 @@ public class ReportIncidentEndpointImpl implements ReportIncidentEndpoint {
 		// store the mail in a file
 		String filename = "mail-incident-" + parameters.getIncidentId() + ".txt";
 		template.sendBodyAndHeader("file://target/subfolder", mailBody, FileComponent.HEADER_FILE_NAME, filename);
+	}
+
+	private void addMailSendConsumer() throws Exception {
+		// Grab the endpoint where we should consume. Option - the first poll starts after 2 seconds
+		Endpoint endpint = camel.getEndpoint("file://target/subfolder?consumer.initialDelay=2000");
+
+		// create the event driven consumer
+		// the Processor is the code what should happen when there is an event
+		// (think it as the onMessage method)
+		Consumer consumer = endpint.createConsumer(new Processor() {
+
+			@Override
+			public void process(Exchange exchange) throws Exception {
+				// get the mail body as a String
+				String mailBody = exchange.getIn().getBody(String.class);
+
+				// okay now we are read to send it as an email
+				System.out.println("Sending email..." + mailBody);
+			}
+		});
+
+		// star the consumer, it will listen for files
+		consumer.start();
 	}
 }

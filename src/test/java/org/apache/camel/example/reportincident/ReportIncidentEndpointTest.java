@@ -52,5 +52,8 @@ public class ReportIncidentEndpointTest extends TestCase {
 
 		OutputReportIncident out = client.reportIncident(input);
 		assertEquals("Response code is wrong", "OK", out.getCode());
+
+		// give the event driven consumer time to react
+		Thread.sleep(10 * 1000);
 	}
 }
